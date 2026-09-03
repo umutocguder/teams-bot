@@ -1,0 +1,30 @@
+{
+  "name": "teams-bot",
+  "version": "1.0.0",
+  "description": "Microsoft Teams Bot built with TypeScript and Microsoft Bot Framework",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+  },
+  "keywords": [
+    "teams",
+    "bot",
+    "botframework",
+    "typescript"
+  ],
+  "author": "Umut Öçgüder",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.23.3",
+    "dotenv": "^17.4.2",
+    "restify": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/restify": "^8.5.12",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^7.0.2"
+  }
+}
