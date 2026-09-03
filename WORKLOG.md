@@ -28,3 +28,22 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
   - İsteğe bağlı: Yapay Zeka (Gemini / OpenAI) LLM entegrasyonu veya özel şirket/proje webhook bildirimlerinin eklenmesi.
   - Azure Bot App Registration tanımlanması ve manifest paketinin (.zip) hazırlanması.
   - GitHub reposu oluşturulup push edilmesi (`gh repo create`).
+
+### [2026-09-03 15:48] GitHub Private Push, Antigravity Proje Kaydı ve Keep-Alive Scripti
+- **Görev ve Amaç**: Projenin GitHub'a Private (Gizli) olarak pushlanması, Antigravity Projects listesine kaydedilmesi ve Teams'te sürekli Online (Yeşil) kalmayı sağlayan yerel macOS Keep-Alive aracının geliştirilmesi.
+- **Teknik Kararlar ve Mimari Değişiklikler**:
+  - `gh repo create teams-bot --private --source=. --push` ile repo `https://github.com/umutocguder/teams-bot` adresinde private olarak oluşturuldu ve bağlandı.
+  - `04d4ee5d-76d7-4366-8330-4c1f99f7487c.json` ile Antigravity Projects yapılandırmasına `teams-bot` eklendi.
+  - `scripts/keep-alive.swift` ve derlenmiş `bin/keep-alive` geliştirildi:
+    - macOS `CoreGraphics` (`CGEventPost` to `.cghidEventTap`) kullanılarak her 60 saniyede bir 1px mikro hareket ile sistem boşta sayacı (idle timer) sıfırlanıyor.
+    - `npm run keep-alive` betiği eklendi.
+- **Etkilenen Dosyalar ve Bileşenler**:
+  - [scripts/keep-alive.swift](file:///Users/umut/mycodespace/teams-bot/scripts/keep-alive.swift)
+  - [package.json](file:///Users/umut/mycodespace/teams-bot/package.json)
+  - [README.md](file:///Users/umut/mycodespace/teams-bot/README.md)
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Mevcut Durum ve Doğrulama**:
+  - GitHub repo private olarak doğrulandı (`isPrivate: true`).
+  - Swift derlemesi tamamlandı (`swiftc` -> `bin/keep-alive`).
+  - Antigravity proje kaydı tamamlandı.
+- **Sıradaki Adımlar**: Kullanıcının dilerse Antigravity sol menüsünden `teams-bot` projesini seçerek izole çalışmaya başlaması.

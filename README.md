@@ -50,3 +50,24 @@ ngrok http 3978
 ```
 
 Elde edilen genel adresi (`https://<ngrok-id>.ngrok-free.app/api/messages`) Azure Bot Configuration > Messaging Endpoint alanına kaydedin.
+
+---
+
+## 🟢 Teams & Mac "Her Zaman Online" (Keep-Alive) Modu
+
+Teams'te bilgisayar başından ayrılsanız bile durumunuzun **"Uzakta (Away / Sarı)"** yerine sürekli **"Kullanılabilir (Available / Yeşil)"** görünmesini sağlayan yerel macOS CoreGraphics betiği:
+
+### Özellikler:
+- Her 60 saniyede bir imleci 1 piksel kaydırıp geri getirerek işletim sisteminin boşta kalma sayacını (idle timer) sıfırlar.
+- Gözle fark edilmez, arka planda sıfır CPU ve RAM ile çalışır.
+- Harici hiçbir paket veya izin gerektirmez (yerel Swift + CoreGraphics).
+
+### Çalıştırma:
+```bash
+# Hızlı çalıştırma
+npm run keep-alive
+
+# Veya Swift ile doğrudan çalıştırma
+npm run keep-alive:swift
+```
+Çıkmak için terminalde `Ctrl + C` tuşlarına basmanız yeterlidir.
