@@ -47,3 +47,17 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
   - Swift derlemesi tamamlandı (`swiftc` -> `bin/keep-alive`).
   - Antigravity proje kaydı tamamlandı.
 - **Sıradaki Adımlar**: Kullanıcının dilerse Antigravity sol menüsünden `teams-bot` projesini seçerek izole çalışmaya başlaması.
+
+### [2026-09-03 15:53] macOS LaunchAgent Otomasyonu (Auto-Start on Boot & Keep-Alive)
+- **Görev ve Amaç**: Bilgisayar her açıldığında Keep-Alive betiğinin arka planda otomatik başlaması ve olası bir durmada kendiliğinden yeniden ayağa kalkması (`KeepAlive: true`).
+- **Teknik Kararlar ve Mimari Değişiklikler**:
+  - `~/Library/LaunchAgents/com.umut.teams-keep-alive.plist` dosyası oluşturuldu.
+  - `RunAtLoad` ve `KeepAlive` özellikleri `true` yapılarak macOS `launchd` sistem servisine bağlandı.
+  - Servis yönetimi için `npm run keep-alive:service-start`, `npm run keep-alive:service-stop` ve `npm run keep-alive:service-status` scriptleri `package.json`'a eklendi.
+- **Etkilenen Dosyalar ve Bileşenler**:
+  - `~/Library/LaunchAgents/com.umut.teams-keep-alive.plist`
+  - [package.json](file:///Users/umut/mycodespace/teams-bot/package.json)
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Mevcut Durum ve Doğrulama**:
+  - `launchctl load` çalıştırıldı ve servis arka planda PID ile aktif olarak doğrulandı.
+
