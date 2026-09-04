@@ -91,4 +91,20 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Doğrulama**:
   - Binary derlendi, arka plan LaunchAgent servisi yenilendi ve ekranda imleç hareketi bizzat test edilip doğrulandı.
 
+### [2026-09-04 17:09] Keep-Alive v5.0: Kesintisiz 80px Fiziksel Hareket & Teams Canlılık Odaklama Pingi
+- **Kök Neden Tespiti**:
+  - `idleSeconds >= 5.0` şartı varken kullanıcı ekran başında test ederken veya yazışırken süre sürekli sıfırlandığı için fare hiç oynamıyordu.
+  - Microsoft Teams 2.0 (WebView2), uygulama arka planda simge durumunda bırakıldığında işletim sisteminin genel fare hareketlerini dinlemeyi durduruyor ve durum sarıda kilitli kalıyordu.
+- **Teknik Çözüm**:
+  - **Koşulsuz 15s Periyot**: Boşta kalma eşiği kaldırıldı; her 15 saniyede bir imleç ekranda 80 piksel gözle görülür şekilde sağa/sola hareket ettirilip geri alınıyor.
+  - **Shift Tuşu Darbesi**: Tüm işletim sistemi pencerelerini uyandıran zararsız Shift bas/bırak eklendi.
+  - **Teams Odaklama Pingi (`pingTeamsFocus`)**: Dakikada bir arka plandaki Microsoft Teams'e 0.1 saniyelik odak verilip hemen mevcut uygulamaya geri dönülüyor; bu sayede Teams WebView'i Microsoft sunucularına anında "Available / Yeşil" durum güncellemesi gönderiyor.
+- **Etkilenen Dosyalar**:
+  - [scripts/keep-alive.swift](file:///Users/umut/mycodespace/teams-bot/scripts/keep-alive.swift)
+  - `bin/keep-alive`
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - Servis derlenip yeniden başlatıldı, loglarda düzenli olarak 80px hareketlerin ve odak pinginin çalıştığı doğrulandı.
+
+
 
