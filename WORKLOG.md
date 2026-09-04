@@ -61,3 +61,17 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Mevcut Durum ve Doğrulama**:
   - `launchctl load` çalıştırıldı ve servis arka planda PID ile aktif olarak doğrulandı.
 
+### [2026-09-04 08:50] Keep-Alive v2.0: IOKit Ekran/Sistem Uyku Engelleme & Donanım HID Sinyali
+- **Sorun**: Önceki versiyonda Mac ekran zaman aşımına uğrayıp uyku moduna geçiyordu; ekran uyuyunca Teams otomatik olarak "Uzakta (Sarı)" durumuna düşüyordu. Ayrıca kullanıcı sunucudan değil sadece kendi kişisel bilgisayarından yerel fiziksel hareket talep etti.
+- **Teknik Çözüm ve Mimari İyileştirmeler**:
+  - **Ekran ve Sistem Uykusu Kilidi**: `IOKit.pwr_mgt` kütüphanesinden `kIOPMAssertionTypePreventUserIdleDisplaySleep` ve `kIOPMAssertionTypePreventUserIdleSystemSleep` assertion'ları entegre edildi. Mac ekranının kapanması ve sistemin uykuya geçmesi donanım/işletim sistemi seviyesinde engellendi.
+  - **Donanım Seviyesi HID Sinyali**: `CGEventSource(stateID: .hidSystemState)` ve `IOPMAssertionDeclareUserActivity` eklenerek işletim sisteminin `HIDIdleTime` donanım sayacı sıfırlandı.
+  - **Sinyal Aralığı**: 30 saniyeye çekildi.
+  - **Log Flush**: `fflush(stdout)` ile logların anlık yazılması sağlandı.
+- **Etkilenen Dosyalar**:
+  - [scripts/keep-alive.swift](file:///Users/umut/mycodespace/teams-bot/scripts/keep-alive.swift)
+  - `bin/keep-alive`
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - Binary derlendi, LaunchAgent servisi yeniden başlatıldı, loglarda ekran kilidi ve canlılık sinyallerinin aktığı doğrulandı.
+
