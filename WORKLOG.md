@@ -106,5 +106,25 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Doğrulama**:
   - Servis derlenip yeniden başlatıldı, loglarda düzenli olarak 80px hareketlerin ve odak pinginin çalıştığı doğrulandı.
 
+### [2026-09-05 00:14] Keep-Alive v6.0: Stealth 1-Piksel Mikroskobik Hareket & Donanım Seviyesi Ekran/Sistem Uyku Kilidi
+- **Kullanıcı Geri Bildirimi ve Talepleri**:
+  - Önceki sürümdeki 80 piksellik hareket aşırı büyük ve rahatsız edici bulundu. İmlecin kullanıcının fark edemeyeceği kadar milimetrik (1 piksel) hareket etmesi istendi.
+  - Hareket aralığının tam olarak 30 saniyede bir olması talep edildi.
+  - Bilgisayarın ve ekranın uykuya dalmasını kesinlikle engellemesi (çünkü ekran uyuyunca Teams doğrudan sarıya düşüyor) istendi.
+  - Pencereler arasında odak değiştirilmemesi (odak çalma olmaması) talep edildi.
+- **Teknik Uygulama**:
+  - **IOKit Güç Kilitleri (`IOKit.pwr_mgt`)**: Apple'ın yerel güç yöneticisinden `kIOPMAssertionTypePreventUserIdleDisplaySleep` ve `kIOPMAssertionTypePreventUserIdleSystemSleep` assertion'ları kilitlendi (`pmset -g assertions` ile doğrulandı). Mac ekranı ve sistemi açık kaldığı sürece ASLA uykuya geçmez.
+  - **1 Piksel Mikroskobik Hareket**: Fare konumu her 30 saniyede bir sadece 1 piksel (`currentLocation.x + 1`) kaydırılıp 50 milisaniye sonra eski konumuna getirilir. Gözle fark edilmez, kullanıcı çalışırken asla rahatsız etmez.
+  - **Donanım Seviyesi HID Sinyali**: `CGEventSource(stateID: .hidSystemState)` ve `IOPMAssertionDeclareUserActivity` ile donanım boşta sayacı sıfırlanır, Teams'in 5 dakikalık "Away" sayacı asla tetiklenmez.
+  - **Sıfır Odak Çalma**: AppleScript odak değiştirme kaldırıldı; tamamen arka planda sessiz ve gizli çalışır.
+- **Etkilenen Dosyalar**:
+  - [scripts/keep-alive.swift](file:///Users/umut/mycodespace/teams-bot/scripts/keep-alive.swift)
+  - `bin/keep-alive`
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - `pmset -g assertions` ile `PreventUserIdleDisplaySleep` ve `PreventUserIdleSystemSleep` kilitlerinin devrede olduğu teyit edildi.
+  - Loglar `/tmp/teams-keep-alive.log` üzerinden düzenli 30 saniye periyotla doğrulandı.
+
+
 
 

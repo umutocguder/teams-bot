@@ -1,6 +1,5 @@
 import Foundation
 import CoreGraphics
-import ApplicationServices
 import IOKit.pwr_mgt
 
 // ANSI Renk Kodları
@@ -17,87 +16,80 @@ func getCurrentTime() -> String {
 
 print("""
 \(cyan)=======================================================
-🚀 Teams & Mac Guaranteed Mouse Mover v5.0
+🚀 Teams & Mac Stealth Keep-Alive v6.0 (Milimetrik & Uyku Kilidi)
 =======================================================\(reset)
 🟢 Durum: Aktif
-- Çalışma Şekli: Her 15 saniyede bir KESİNTİSİZ fareyi 80px oynatır
-- Odak ve Tuş: Shift tuşu darbesi ve arka plandaki Teams'e anlık canlılık pingi
-- Görünürlük: İmleç ekranda gözle görülür şekilde hareket eder
+- Ekran & Sistem Uyku Kilidi: Devrede (Mac ve ekran kesinlikle uykuya geçmez)
+- Hareket: 1 piksel mikroskobik (Gözle fark edilmez, kullanıcıyı rahatsız etmez)
+- Periyot: Tam olarak her 30 saniyede bir
+- Pencerelere / Ekrana Müdahale: Sıfır (Odak çalmaz, arkada sessizce çalışır)
 💡 Çıkmak için: \(yellow)Ctrl + C\(reset)
 """)
 fflush(stdout)
 
-signal(SIGINT) { _ in
-    print("\n\(yellow)🛑 Keep-Alive durduruldu. Çıkılıyor...\(reset)")
-    exit(0)
+// 1. Ekranın ve sistemin uykuya dalmasını işletim sistemi seviyesinde engelle (Display & System Sleep Assertion)
+var displayAssertion: IOPMAssertionID = 0
+let displayResult = IOPMAssertionCreateWithName(
+    kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
+    IOPMAssertionLevel(kIOPMAssertionLevelOn),
+    "Teams Keep-Alive Display Sleep Prevention" as CFString,
+    &displayAssertion
+)
+
+var systemAssertion: IOPMAssertionID = 0
+let systemResult = IOPMAssertionCreateWithName(
+    kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
+    IOPMAssertionLevel(kIOPMAssertionLevelOn),
+    "Teams Keep-Alive System Sleep Prevention" as CFString,
+    &systemAssertion
+)
+
+if displayResult == kIOReturnSuccess && systemResult == kIOReturnSuccess {
+    print("\(green)✓ macOS Ekran ve Sistem uyku kilidi başarıyla kilitlendi.\(reset)")
+} else {
+    print("\(yellow)⚠️ Uyarı: Uyku kilidi başlatılamadı.\(reset)")
 }
-signal(SIGTERM) { _ in
-    print("\n\(yellow)🛑 Keep-Alive durduruldu. Çıkılıyor...\(reset)")
+fflush(stdout)
+
+func cleanupAndExit() {
+    if displayAssertion != 0 { IOPMAssertionRelease(displayAssertion) }
+    if systemAssertion != 0 { IOPMAssertionRelease(systemAssertion) }
+    print("\n\(yellow)🛑 Keep-Alive durduruldu. Uyku kilitleri serbest bırakıldı.\(reset)")
     exit(0)
 }
 
-func pingTeamsFocus() {
-    let script = """
-    tell application "System Events"
-        set frontApp to first application process whose frontmost is true
-        set frontAppName to name of frontApp
-    end tell
-    if frontAppName is not "MSTeams" and frontAppName is not "Microsoft Teams" then
-        tell application "Microsoft Teams" to activate
-        delay 0.1
-        tell application frontAppName to activate
-    end if
-    """
-    if let appleScript = NSAppleScript(source: script) {
-        var error: NSDictionary?
-        appleScript.executeAndReturnError(&error)
-    }
-}
+signal(SIGINT) { _ in cleanupAndExit() }
+signal(SIGTERM) { _ in cleanupAndExit() }
 
-var moveCount = 0
+var pulseCount = 0
+let hidSource = CGEventSource(stateID: .hidSystemState)
 
 while true {
+    // 1. Kullanıcının mevcut fare konumunu al
     let currentLocation = CGEvent(source: nil)?.location ?? CGPoint(x: 500, y: 500)
-    let direction: CGFloat = (moveCount % 2 == 0) ? 80.0 : -80.0
-    let targetLocation = CGPoint(x: currentLocation.x + direction, y: currentLocation.y)
+    let offset: CGFloat = (pulseCount % 2 == 0) ? 1.0 : -1.0
+    let targetLocation = CGPoint(x: currentLocation.x + offset, y: currentLocation.y)
     
-    // 1. İmleci ekranda 80 piksel kaydır (Gözle net görülür)
-    CGWarpMouseCursorPosition(targetLocation)
-    if let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: targetLocation, mouseButton: .left) {
+    // 2. 1 piksellik mikroskobik hareket uygula (Gözle fark edilmez)
+    if let moveEvent = CGEvent(mouseEventSource: hidSource, mouseType: .mouseMoved, mouseCursorPosition: targetLocation, mouseButton: .left) {
         moveEvent.post(tap: .cghidEventTap)
     }
     
-    // 2. Görünmez Shift tuşu darbesi (Tüm uygulamaları ve Teams WebView'i uyandırır)
-    if let shiftDown = CGEvent(keyboardEventSource: nil, virtualKey: 56, keyDown: true) {
-        shiftDown.post(tap: .cghidEventTap)
-    }
+    // 50 milisaniye sonra eski pikseline geri getir
     Thread.sleep(forTimeInterval: 0.05)
-    if let shiftUp = CGEvent(keyboardEventSource: nil, virtualKey: 56, keyDown: false) {
-        shiftUp.post(tap: .cghidEventTap)
-    }
     
-    // İmleç hareketini kullanıcının görmesi için 0.4 saniye bekle
-    Thread.sleep(forTimeInterval: 0.4)
-    
-    // 3. İmleci orijinal yerine geri getir
-    CGWarpMouseCursorPosition(currentLocation)
-    if let returnEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: currentLocation, mouseButton: .left) {
+    if let returnEvent = CGEvent(mouseEventSource: hidSource, mouseType: .mouseMoved, mouseCursorPosition: currentLocation, mouseButton: .left) {
         returnEvent.post(tap: .cghidEventTap)
     }
     
-    // 4. Her 4 hamlede bir (dakikada bir) Teams'e anlık odak pingi atarak Yeşil durumu tazele
-    if moveCount % 4 == 0 {
-        pingTeamsFocus()
-    }
-    
-    // 5. Sistem seviyesinde kullanıcı aktivitesi bildir
+    // 3. Donanım seviyesinde kullanıcı aktivitesi bildir (HID sayacını ve Teams timer'ını sıfırlar)
     var activityID: IOPMAssertionID = 0
-    IOPMAssertionDeclareUserActivity("Teams Visible Keep Alive" as CFString, kIOPMUserActiveLocal, &activityID)
+    IOPMAssertionDeclareUserActivity("Teams Stealth Keep Alive" as CFString, kIOPMUserActiveLocal, &activityID)
     
-    moveCount += 1
-    print("[\(getCurrentTime())] \(green)✓ 80px Fare Hareketi yapıldı (#\(moveCount))\(reset) -> Teams: Online (Yeşil)")
+    pulseCount += 1
+    print("[\(getCurrentTime())] \(green)✓ Milimetrik canlılık sinyali gönderildi (#\(pulseCount))\(reset) -> Ekran: Uyanık, Teams: Online (Yeşil)")
     fflush(stdout)
     
-    // 15 saniye bekle
-    Thread.sleep(forTimeInterval: 15)
+    // Tam 30 saniye bekle
+    Thread.sleep(forTimeInterval: 30)
 }
