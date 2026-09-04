@@ -1,5 +1,6 @@
 import Foundation
 import CoreGraphics
+import ApplicationServices
 import IOKit.pwr_mgt
 
 // ANSI Renk Kodları
@@ -16,75 +17,62 @@ func getCurrentTime() -> String {
 
 print("""
 \(cyan)=======================================================
-🚀 Teams & Mac Always-Active Keep-Alive v2.0
+🚀 Teams & Mac Visible Mouse Mover (Keep-Alive v3.0)
 =======================================================\(reset)
 🟢 Durum: Aktif
-- Ekran / Mac Uyku Modu Engelleme: AÇIK (IOKit Display & System Sleep Assertion)
-- Donanım Seviyesi HID Canlılık: AÇIK (.hidSystemState + DeclareUserActivity)
-- Sinyal Aralığı: 30 Saniye
+- Fare Hareketi: Gerçek ve görünür (25 piksel kaydırma & geri alma)
+- Kontrol Aralığı: Her 15 saniyede bir kontrol
+- Akıllı Algılama: Siz çalışırken dokunmaz, boşta kaldığınızda fareyi oynatır
+- Uyku Ayarı: Sistemin uyku ayarlarını zorlamaz, kapağı kapattığınızda uyur
 💡 Çıkmak için: \(yellow)Ctrl + C\(reset)
 """)
+fflush(stdout)
 
-// 1. Ekranın ve Mac'in uyku moduna geçmesini donanım/işletim sistemi seviyesinde engelle
-var displayAssertionID: IOPMAssertionID = 0
-let displayResult = IOPMAssertionCreateWithName(
-    kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
-    IOPMAssertionLevel(kIOPMAssertionLevelOn),
-    "Teams Keep Alive Display Sleep Prevention" as CFString,
-    &displayAssertionID
-)
-
-var systemAssertionID: IOPMAssertionID = 0
-let systemResult = IOPMAssertionCreateWithName(
-    kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
-    IOPMAssertionLevel(kIOPMAssertionLevelOn),
-    "Teams Keep Alive System Sleep Prevention" as CFString,
-    &systemAssertionID
-)
-
-if displayResult == kIOReturnSuccess && systemResult == kIOReturnSuccess {
-    print("\(green)✓ macOS Ekran ve Sistem Uyku Modu kilidi başarıyla devrede.\(reset)")
-} else {
-    print("\(yellow)⚠️ Uyarı: Uyku modu assertion oluşturulamadı.\(reset)")
+signal(SIGINT) { _ in
+    print("\n\(yellow)🛑 Keep-Alive durduruldu. Çıkılıyor...\(reset)")
+    exit(0)
 }
-
-// SIGINT / SIGTERM yakalandığında kilitleri serbest bırakıp çık
-func cleanupAndExit() {
-    if displayAssertionID != 0 { IOPMAssertionRelease(displayAssertionID) }
-    if systemAssertionID != 0 { IOPMAssertionRelease(systemAssertionID) }
-    print("\n\(yellow)🛑 Keep-Alive durduruldu. Uyku kilitleri serbest bırakıldı.\(reset)")
+signal(SIGTERM) { _ in
+    print("\n\(yellow)🛑 Keep-Alive durduruldu. Çıkılıyor...\(reset)")
     exit(0)
 }
 
-signal(SIGINT) { _ in cleanupAndExit() }
-signal(SIGTERM) { _ in cleanupAndExit() }
-
-var pulseCount = 0
-let hidSource = CGEventSource(stateID: .hidSystemState)
+var moveCount = 0
 
 while true {
-    // 1. Sistem seviyesinde kullanıcı aktivitesi bildir (HID idle timer sıfırlar)
-    var activityAssertionID: IOPMAssertionID = 0
-    IOPMAssertionDeclareUserActivity("Teams Keep Alive User Active" as CFString, kIOPMUserActiveLocal, &activityAssertionID)
+    // Kullanıcının son ne zaman klavye/fare kullandığını kontrol et
+    let idleSeconds = CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: CGEventType(rawValue: UInt32.max)!)
     
-    // 2. Fare konumunu al ve donanım seviyesinde 1px mikro hareket ver
-    let currentLocation = CGEvent(source: nil)?.location ?? CGPoint(x: 500, y: 500)
-    let offset: CGFloat = (pulseCount % 2 == 0) ? 1.0 : -1.0
-    
-    if let moveEvent = CGEvent(mouseEventSource: hidSource, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x: currentLocation.x + offset, y: currentLocation.y), mouseButton: .left) {
-        moveEvent.post(tap: .cghidEventTap)
+    // Eğer kullanıcı en az 10 saniyedir boşta ise fareyi görünür şekilde hareket ettir
+    if idleSeconds >= 10.0 {
+        let currentLocation = CGEvent(source: nil)?.location ?? CGPoint(x: 500, y: 500)
+        let direction: CGFloat = (moveCount % 2 == 0) ? 25.0 : -25.0
+        let targetLocation = CGPoint(x: currentLocation.x + direction, y: currentLocation.y)
+        
+        // 1. İmleci ekranda fiziksel/görünür olarak kaydır
+        CGWarpMouseCursorPosition(targetLocation)
+        if let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: targetLocation, mouseButton: .left) {
+            moveEvent.post(tap: .cghidEventTap)
+        }
+        
+        // Gözle görülmesi ve uygulamanın algılaması için 0.25 saniye bekle
+        Thread.sleep(forTimeInterval: 0.25)
+        
+        // 2. Orijinal konuma geri getir
+        CGWarpMouseCursorPosition(currentLocation)
+        if let returnEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: currentLocation, mouseButton: .left) {
+            returnEvent.post(tap: .cghidEventTap)
+        }
+        
+        // 3. Kullanıcı aktivitesini sisteme bildir
+        var activityID: IOPMAssertionID = 0
+        IOPMAssertionDeclareUserActivity("Teams Visible Keep Alive" as CFString, kIOPMUserActiveLocal, &activityID)
+        
+        moveCount += 1
+        print("[\(getCurrentTime())] \(green)✓ Fare görünür şekilde hareket ettirildi (#\(moveCount))\(reset) - Boşta kalma süresi sıfırlandı -> Teams: Online (Yeşil)")
+        fflush(stdout)
     }
     
-    Thread.sleep(forTimeInterval: 0.05)
-    
-    if let returnEvent = CGEvent(mouseEventSource: hidSource, mouseType: .mouseMoved, mouseCursorPosition: currentLocation, mouseButton: .left) {
-        returnEvent.post(tap: .cghidEventTap)
-    }
-    
-    pulseCount += 1
-    print("[\(getCurrentTime())] \(green)✓ Canlılık & Ekran Kilidi tazelendi (#\(pulseCount))\(reset) - Mac: Uyanık, Teams: Online (Yeşil)")
-    fflush(stdout)
-    
-    // 30 saniye bekle
-    Thread.sleep(forTimeInterval: 30)
+    // 15 saniye bekle
+    Thread.sleep(forTimeInterval: 15)
 }

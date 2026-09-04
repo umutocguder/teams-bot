@@ -75,3 +75,20 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Doğrulama**:
   - Binary derlendi, LaunchAgent servisi yeniden başlatıldı, loglarda ekran kilidi ve canlılık sinyallerinin aktığı doğrulandı.
 
+### [2026-09-04 16:17] Keep-Alive v3.0: Görünür Fiziksel Fare Hareketi (CGWarp) & Doğal Uyku Yönetimi
+- **Kullanıcı Geri Bildirimi**:
+  - Önceki sürümde fare ekranda fiziksel/görünür olarak oynamıyordu ve Teams sarı durumdan yeşile dönmüyordu.
+  - Sistemin uyku ayarlarının kilitlenmesi istenmedi; kullanıcı kapağı kapattığında veya dilediğinde bilgisayarın doğal olarak uykuya geçmesi talep edildi.
+- **Teknik Çözüm ve Mimari Değişiklikler**:
+  - **Fiziksel İmleç Hareketi (`CGWarpMouseCursorPosition`)**: Yalnızca arka plan event tap'i yerine, macOS WindowServer imleç konumu ekranda 25 piksel sağa/sola fiziksel olarak kaydırılıp 0.25 saniye sonra geri alınıyor. Kullanıcı imlecin hareket ettiğini ekranda bizzat görüyor.
+  - **Sistem Uykusunu Zorlamama**: IOKit sistem/ekran uyku engelleme assertion'ları kaldırıldı. Kullanıcı Mac kapağını kapattığında sistem doğal olarak uykuya geçer.
+  - **Akıllı Boşta Kalma Denetimi**: `CGEventSource.secondsSinceLastEventType` ile son kullanıcı girdisi izleniyor; kullanıcı aktif olarak klavye/fare kullanıyorsa müdahale edilmiyor, 10 saniyeden uzun süre boşta kalındığında fare otomatik olarak görünür biçimde hareket ettiriliyor.
+  - **Kontrol Döngüsü**: 15 saniyede bir çalışacak şekilde optimize edildi.
+- **Etkilenen Dosyalar**:
+  - [scripts/keep-alive.swift](file:///Users/umut/mycodespace/teams-bot/scripts/keep-alive.swift)
+  - `bin/keep-alive`
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - Binary derlendi, arka plan LaunchAgent servisi yenilendi ve ekranda imleç hareketi bizzat test edilip doğrulandı.
+
+
