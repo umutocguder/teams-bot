@@ -20,8 +20,8 @@
     "botframework",
     "typescript"
   ],
-  "author": "Umut Öçgüder",
-  "license": "MIT",
+  "author": "11hopem (11 Hopem Software Ltd. Şti.)",
+  "license": "UNLICENSED",
   "dependencies": {
     "botbuilder": "^4.23.3",
     "dotenv": "^17.4.2",

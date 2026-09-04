@@ -1,3 +1,9 @@
+/**
+ * Created by 11hopem (11 Hopem Software Ltd. Şti.)
+ * Copyright (c) 2026 11hopem. All rights reserved.
+ * Licensed under 11 Hopem Software Proprietary License.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert';
 
