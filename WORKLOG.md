@@ -125,6 +125,21 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
   - `pmset -g assertions` ile `PreventUserIdleDisplaySleep` ve `PreventUserIdleSystemSleep` kilitlerinin devrede olduğu teyit edildi.
   - Loglar `/tmp/teams-keep-alive.log` üzerinden düzenli 30 saniye periyotla doğrulandı.
 
+### [2026-09-05 00:41] Automated Unit Test Suite Implementation
+- **Goal & Purpose**: Implement automated tests complying with Section 8 of AGENTS.md.
+- **Implementation Highlights**:
+  - Implemented `tests/bot.test.ts`:
+    - Validates keep-alive jitter interval distribution within bounded tolerance (±20%).
+    - Validates micro-movement delta coordinate calculation (<5px threshold).
+  - Added `npm test` script to `package.json`.
+- **Affected Files**:
+  - [tests/bot.test.ts](file:///Users/umut/mycodespaces/teams-bot/tests/bot.test.ts)
+  - [package.json](file:///Users/umut/mycodespaces/teams-bot/package.json)
+  - [WORKLOG.md](file:///Users/umut/mycodespaces/teams-bot/WORKLOG.md)
+- **Current State & Verification**:
+  - `npm test` executed: 2/2 tests passed with 100% success.
+
+
 
 
 
