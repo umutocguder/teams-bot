@@ -17,13 +17,13 @@ func getCurrentTime() -> String {
 
 print("""
 \(cyan)=======================================================
-🚀 Teams & Mac Visible Mouse Mover (Keep-Alive v3.0)
+🚀 Teams & Mac Active Keep-Alive v3.1
 =======================================================\(reset)
 🟢 Durum: Aktif
-- Fare Hareketi: Gerçek ve görünür (25 piksel kaydırma & geri alma)
-- Kontrol Aralığı: Her 15 saniyede bir kontrol
-- Akıllı Algılama: Siz çalışırken dokunmaz, boşta kaldığınızda fareyi oynatır
-- Uyku Ayarı: Sistemin uyku ayarlarını zorlamaz, kapağı kapattığınızda uyur
+- Fare: 30 piksel görünür fiziksel hareket (sağ/sol)
+- Klavye: Zararsız Shift darbesi (Teams ve arka plan pencerelerini uyandırır)
+- Kontrol Aralığı: Her 8 saniyede bir kontrol
+- Boşta Kalma Eşiği: 5 saniye
 💡 Çıkmak için: \(yellow)Ctrl + C\(reset)
 """)
 fflush(stdout)
@@ -40,39 +40,47 @@ signal(SIGTERM) { _ in
 var moveCount = 0
 
 while true {
-    // Kullanıcının son ne zaman klavye/fare kullandığını kontrol et
     let idleSeconds = CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: CGEventType(rawValue: UInt32.max)!)
     
-    // Eğer kullanıcı en az 10 saniyedir boşta ise fareyi görünür şekilde hareket ettir
-    if idleSeconds >= 10.0 {
+    // Kullanıcı 5 saniyedir boşta ise harekete geç
+    if idleSeconds >= 5.0 {
         let currentLocation = CGEvent(source: nil)?.location ?? CGPoint(x: 500, y: 500)
-        let direction: CGFloat = (moveCount % 2 == 0) ? 25.0 : -25.0
+        let direction: CGFloat = (moveCount % 2 == 0) ? 30.0 : -30.0
         let targetLocation = CGPoint(x: currentLocation.x + direction, y: currentLocation.y)
         
-        // 1. İmleci ekranda fiziksel/görünür olarak kaydır
+        // 1. İmleci ekranda fiziksel olarak kaydır
         CGWarpMouseCursorPosition(targetLocation)
         if let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: targetLocation, mouseButton: .left) {
             moveEvent.post(tap: .cghidEventTap)
         }
         
-        // Gözle görülmesi ve uygulamanın algılaması için 0.25 saniye bekle
-        Thread.sleep(forTimeInterval: 0.25)
+        // 2. Zararsız Shift tuşu darbesi (Teams'in arka planda uyumasını önler)
+        if let shiftDown = CGEvent(keyboardEventSource: nil, virtualKey: 56, keyDown: true) {
+            shiftDown.post(tap: .cghidEventTap)
+        }
+        Thread.sleep(forTimeInterval: 0.05)
+        if let shiftUp = CGEvent(keyboardEventSource: nil, virtualKey: 56, keyDown: false) {
+            shiftUp.post(tap: .cghidEventTap)
+        }
         
-        // 2. Orijinal konuma geri getir
+        // Gözle görülmesi için kısa bekleme
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // 3. İmleci eski konumuna getir
         CGWarpMouseCursorPosition(currentLocation)
         if let returnEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: currentLocation, mouseButton: .left) {
             returnEvent.post(tap: .cghidEventTap)
         }
         
-        // 3. Kullanıcı aktivitesini sisteme bildir
+        // 4. Sistem seviyesi aktivite tazeleme
         var activityID: IOPMAssertionID = 0
         IOPMAssertionDeclareUserActivity("Teams Visible Keep Alive" as CFString, kIOPMUserActiveLocal, &activityID)
         
         moveCount += 1
-        print("[\(getCurrentTime())] \(green)✓ Fare görünür şekilde hareket ettirildi (#\(moveCount))\(reset) - Boşta kalma süresi sıfırlandı -> Teams: Online (Yeşil)")
+        print("[\(getCurrentTime())] \(green)✓ Fare oynatıldı & Shift tazelendi (#\(moveCount))\(reset) -> Teams: Online (Yeşil)")
         fflush(stdout)
     }
     
-    // 15 saniye bekle
-    Thread.sleep(forTimeInterval: 15)
+    // 8 saniye bekle
+    Thread.sleep(forTimeInterval: 8)
 }
