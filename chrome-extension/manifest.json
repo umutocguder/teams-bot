@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Teams Web Keep-Alive",
+  "version": "1.0",
+  "description": "Microsoft Teams Web üzerinde sürekli Aktif ve Yeşil kalmanızı sağlar.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://teams.microsoft.com/*",
+        "https://teams.cloud.microsoft/*",
+        "https://*.teams.microsoft.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

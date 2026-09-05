@@ -139,6 +139,22 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Current State & Verification**:
   - `npm test` executed: 2/2 tests passed with 100% success.
 
+### [2026-09-05 13:25] Teams Web (Chrome Extension) & Otomatik Başlatma Mimarisi
+- **Görev ve Amaç**: Masaüstü Teams uygulamasının kısıtlamalarını aşmak için `https://teams.microsoft.com` üzerinde çalışan yerel bir Chrome Eklentisi (Manifest V3) ve bilgisayar açıldığında Chrome'u otomatik başlatan LaunchAgent kurulması.
+- **Teknik Kararlar**:
+  - `chrome-extension/manifest.json` ve `chrome-extension/content.js` geliştirildi.
+  - **Arka Plan Uyku Engeli (Anti-Throttling)**: Chrome'un arka plan sekmelerini dondurmasını engellemek için sessiz HTML5 ses akışı entegre edildi.
+  - **Canlılık Simülasyonu**: Her 30 saniyede bir Web DOM'una mousemove, mousedown, mouseup, focus ve Shift klavye eventleri gönderiliyor.
+  - **Görsel Bildirim**: Teams sayfasının sağ altına şık yeşil durum rozeti (`🟢 Teams Keep-Alive: Aktif (#X)`) eklendi.
+  - **macOS Otomatik Başlatma**: `~/Library/LaunchAgents/com.umut.teams-web-autostart.plist` ve `scripts/open-teams-chrome.sh` ile bilgisayar her açıldığında Chrome'da Teams Web otomatik açılıyor.
+- **Etkilenen Dosyalar**:
+  - [chrome-extension/manifest.json](file:///Users/umut/mycodespace/teams-bot/chrome-extension/manifest.json)
+  - [chrome-extension/content.js](file:///Users/umut/mycodespace/teams-bot/chrome-extension/content.js)
+  - [scripts/open-teams-chrome.sh](file:///Users/umut/mycodespace/teams-bot/scripts/open-teams-chrome.sh)
+  - `~/Library/LaunchAgents/com.umut.teams-web-autostart.plist`
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+
+
 
 
 
