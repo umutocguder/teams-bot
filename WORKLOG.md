@@ -154,6 +154,18 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
   - `~/Library/LaunchAgents/com.umut.teams-web-autostart.plist`
   - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
 
+### [2026-09-14 09:11] Geliştirme Sunucusu TSX Geçişi & Bot Sunucusu Başlatma
+- **Sorun**: `ts-node-dev`, kurulu olan `typescript@^7` sürümü ile uyumsuzluk (`Cannot read properties of undefined (reading 'fileExists')`) nedeniyle `npm run dev` komutunda çöküyordu.
+- **Teknik Çözüm**:
+  - `ts-node-dev` yerine modern, hızlı ve Node.js v26 uyumlu `tsx` paketine geçildi (`"dev": "tsx watch src/index.ts"`).
+  - `npm test` başarıyla çalıştırıldı (2/2 test passed).
+  - `npm run dev` arka planda başarıyla başlatıldı ve `http://localhost:3978` üzerinde aktif olarak doğrulandı (`/api/health` 200 OK döndü).
+- **Etkilenen Dosyalar**:
+  - [package.json](file:///Users/umut/mycodespace/teams-bot/package.json)
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - `curl -s http://localhost:3978/api/health` -> `{"status":"healthy","timestamp":"..."}` doğrulandı.
+
 
 
 
