@@ -14,7 +14,7 @@ import { FIREBASE_ECOSYSTEM_CONFIG } from '../src/telemetry/firebaseConfig.ts';
 
 test('Telemetry: Firebase ecosystem config verification', () => {
   assert.equal(FIREBASE_ECOSYSTEM_CONFIG.projectId, 'hopem-software-cloud');
-  assert.equal(FIREBASE_ECOSYSTEM_CONFIG.account, 'umutocguder@gmail.com');
+  assert.equal(FIREBASE_ECOSYSTEM_CONFIG.account, 'umutocgdr@gmail.com');
   assert.ok(FIREBASE_ECOSYSTEM_CONFIG.errorReportingUrl.includes('hopem-software-cloud'));
 });
 
