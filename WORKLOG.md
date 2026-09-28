@@ -166,6 +166,23 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Doğrulama**:
   - `curl -s http://localhost:3978/api/health` -> `{"status":"healthy","timestamp":"..."}` doğrulandı.
 
+### [2026-09-28 08:19] PowerPoint Tam Ekran Sunum Modu Otomasyonu (Portsuz & Sıfır Bot)
+- **Kullanıcı Talebi**: Port açmadan, iz bırakmadan, tek komutla ("çalış") PowerPoint tam ekran sunum modunu açıp Teams'i Chrome üzerinden açık tutarak durumu online tutacak otomasyon yapılması.
+- **Teknik Kararlar ve Uygulama**:
+  - `scripts/start-presentation-mode.sh` ve `scripts/stop-presentation-mode.sh` oluşturuldu.
+  - Microsoft PowerPoint'te otomatik olarak yeni boş sunum oluşturulup `Cmd + Shift + Return` ile tam ekran Slayt Gösterisi (Slide Show) başlatılıyor.
+  - PowerPoint doğrudan macOS güç yöneticisinde `NoDisplaySleepAssertion named: "Slide Show"` assertion'ı oluşturuyor.
+  - Google Chrome'da `https://teams.cloud.microsoft` öne getiriliyor.
+  - `package.json`'a `npm run present:start` ve `npm run present:stop` scriptleri eklendi.
+- **Etkilenen Dosyalar**:
+  - [scripts/start-presentation-mode.sh](file:///Users/umut/mycodespace/teams-bot/scripts/start-presentation-mode.sh)
+  - [scripts/stop-presentation-mode.sh](file:///Users/umut/mycodespace/teams-bot/scripts/stop-presentation-mode.sh)
+  - [package.json](file:///Users/umut/mycodespace/teams-bot/package.json)
+  - [WORKLOG.md](file:///Users/umut/mycodespace/teams-bot/WORKLOG.md)
+- **Doğrulama**:
+  - `pmset -g assertions` üzerinden `pid 75141(Microsoft PowerPoint): NoDisplaySleepAssertion named: "Slide Show"` aktif olarak doğrulandı.
+
+
 
 
 

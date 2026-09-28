@@ -12,7 +12,9 @@
     "keep-alive:swift": "swift scripts/keep-alive.swift",
     "keep-alive:service-start": "launchctl load ~/Library/LaunchAgents/com.umut.teams-keep-alive.plist",
     "keep-alive:service-stop": "launchctl unload ~/Library/LaunchAgents/com.umut.teams-keep-alive.plist",
-    "keep-alive:service-status": "launchctl list | grep teams-keep-alive"
+    "keep-alive:service-status": "launchctl list | grep teams-keep-alive",
+    "present:start": "./scripts/start-presentation-mode.sh",
+    "present:stop": "./scripts/stop-presentation-mode.sh"
   },
   "keywords": [
     "teams",
