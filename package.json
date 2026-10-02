@@ -4,6 +4,9 @@
   "description": "Microsoft Teams Bot built with TypeScript and Microsoft Bot Framework",
   "main": "dist/index.js",
   "scripts": {
+    "backup": "npx tsx scripts/backupTeamsBot.ts",
+    "prebuild": "npx tsx scripts/backupTeamsBot.ts",
+    "pretest": "npx tsx scripts/backupTeamsBot.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "node --test 'tests/**/*.test.ts'",

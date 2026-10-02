@@ -182,6 +182,33 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Doğrulama**:
   - `pmset -g assertions` üzerinden `pid 75141(Microsoft PowerPoint): NoDisplaySleepAssertion named: "Slide Show"` aktif olarak doğrulandı.
 
+---
+
+### [2026-10-03 00:56] Otonom Teams Bot Konfigürasyon ve Durum Yedekleme Sistemi (Madde 17)
+- **Görev ve Amaç**: Canlıya çıkış ve veri güvenliği standardı (Madde 17) uyarınca, Teams Bot konfigürasyonu, CloudAdapter port ve servis ayarları için otonom yedekleme (`createTeamsBotBackup`), SHA-256 denetimi (`verifyTeamsBotBackupIntegrity`) ve kurtarma mekanizmasının kurulması.
+- **Teknik Kararlar ve Mimari Değişiklikler**:
+  - `src/backupService.ts`:
+    - `createTeamsBotBackup()`: Bot ayarlarını ve özellik listesini zaman damgalı JSON kopyası (`teams_bot_backup_*.json`) ve `teams_bot_latest_backup.json` olarak kaydeder.
+    - `crypto.createHash('sha256')` ile SHA-256 hesaplayarak `teams_bot_checksums.json` dosyasında son 30 yedeklik denetim günlüğü tutar.
+    - `verifyTeamsBotBackupIntegrity()` ve `restoreTeamsBotFromBackup()` fonksiyonları eklendi.
+  - `scripts/backupTeamsBot.ts`: `tsx` tabanlı bağımsız CLI yedekleme betiği oluşturuldu.
+  - `package.json`: `backup`, `pretest` ve `prebuild` hook'ları eklenerek sistemin kullanıcı müdahalesi olmadan otomatik yedekleme yapması sağlandı.
+  - `tests/backup.test.ts`: Yedek oluşturma, bütünlük denetimi, restorasyon ve denetim logu testleri yazıldı.
+  - `.gitignore`: Zaman damgalı anlık kopyalar yoksayılırken, son geçerli kopya ve sağlama logu korundu.
+- **Etkilenen Dosyalar ve Bileşenler**:
+  - [backupService.ts](file:///Users/umut/mycodespaces/teams-bot/src/backupService.ts)
+  - [backupTeamsBot.ts](file:///Users/umut/mycodespaces/teams-bot/scripts/backupTeamsBot.ts)
+  - [backup.test.ts](file:///Users/umut/mycodespaces/teams-bot/tests/backup.test.ts)
+  - [package.json](file:///Users/umut/mycodespaces/teams-bot/package.json)
+  - [.gitignore](file:///Users/umut/mycodespaces/teams-bot/.gitignore)
+  - [WORKLOG.md](file:///Users/umut/mycodespaces/teams-bot/WORKLOG.md)
+- **Mevcut Durum ve Doğrulama**:
+  - `npm test`: **9 Test çalıştırıldı — %100 Başarı (0 Hata).**
+  - Pretest kancası otonom yedeklemeyi ve SHA-256 sağlama toplamını başarıyla doğruladı.
+- **Sıradaki Adımlar**:
+  - Değişikliklerin GitHub'a commit ve pushlanması.
+
+
 
 
 
