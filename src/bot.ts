@@ -1,93 +1,98 @@
+/**
+ * Created by 11hopem (11 Hopem Software Ltd. Şti.)
+ * Copyright (c) 2026 11hopem. All rights reserved.
+ * Licensed under 11 Hopem Software Proprietary License.
+ */
+
 import {
-    TeamsActivityHandler,
-    TurnContext,
-    MessageFactory,
-    ChannelAccount
+  TeamsActivityHandler,
+  TurnContext,
+  MessageFactory
 } from 'botbuilder';
 import { createWelcomeCard } from './cards/welcomeCard';
 
 export class TeamsBot extends TeamsActivityHandler {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        // 1. Yeni üye katıldığında veya bot ilk eklendiğinde karşılama kartı gönder
-        this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>) => {
-            const membersAdded = context.activity.membersAdded || [];
-            for (const member of membersAdded) {
-                if (member.id !== context.activity.recipient.id) {
-                    const welcomeCard = createWelcomeCard('Teams Bot');
-                    await context.sendActivity(MessageFactory.attachment(welcomeCard));
-                }
-            }
-            await next();
-        });
+    // 1. Dispatch welcome card when new member joins or bot is added
+    this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>) => {
+      const membersAdded = context.activity.membersAdded || [];
+      for (const member of membersAdded) {
+        if (member.id !== context.activity.recipient.id) {
+          const welcomeCard = createWelcomeCard('Teams Bot');
+          await context.sendActivity(MessageFactory.attachment(welcomeCard));
+        }
+      }
+      await next();
+    });
 
-        // 2. Mesaj alındığında işleme
-        this.onMessage(async (context: TurnContext, next: () => Promise<void>) => {
-            // Mesajın içeriğindeki mention'ları temizle
-            TurnContext.removeRecipientMention(context.activity);
-            const text = (context.activity.text || '').trim();
-            const lowerText = text.toLowerCase();
+    // 2. Process incoming activity and messages
+    this.onMessage(async (context: TurnContext, next: () => Promise<void>) => {
+      // Strip bot recipient mention from message text
+      TurnContext.removeRecipientMention(context.activity);
+      const text = (context.activity.text || '').trim();
+      const lowerText = text.toLowerCase();
 
-            // Kart aksiyonlarından gelen verileri kontrol et
-            if (context.activity.value) {
-                const valueData = context.activity.value;
-                if (valueData.command === 'help') {
-                    await this.sendHelpResponse(context);
-                    await next();
-                    return;
-                }
-            }
+      // Check card action payload
+      if (context.activity.value) {
+        const valueData = context.activity.value;
+        if (valueData.command === 'help') {
+          await this.sendHelpResponse(context);
+          await next();
+          return;
+        }
+      }
 
-            // Komut bazlı yönlendirme
-            switch (lowerText) {
-                case 'ping':
-                    await context.sendActivity('🏓 Pong! Bot aktif ve Teams ile iletişimde.');
-                    break;
+      // Command dispatcher
+      switch (lowerText) {
+        case 'ping':
+          await context.sendActivity('🏓 Pong! Bot is active and communicating with Teams.');
+          break;
 
-                case 'help':
-                case 'yardım':
-                case '?':
-                    await this.sendHelpResponse(context);
-                    break;
+        case 'help':
+        case 'yardım':
+        case '?':
+          await this.sendHelpResponse(context);
+          break;
 
-                case 'kart':
-                case 'card':
-                case 'info':
-                    const card = createWelcomeCard('Teams Asistanı');
-                    await context.sendActivity(MessageFactory.attachment(card));
-                    break;
+        case 'kart':
+        case 'card':
+        case 'info':
+          const card = createWelcomeCard('Teams Assistant');
+          await context.sendActivity(MessageFactory.attachment(card));
+          break;
 
-                case 'status':
-                case 'durum':
-                    const uptime = Math.floor(process.uptime());
-                    await context.sendActivity(`⚙️ **Sistem Durumu:**\n- Çalışma Süresi: ${uptime} saniye\n- Node.js: ${process.version}\n- Platform: ${process.platform}`);
-                    break;
+        case 'status':
+        case 'durum':
+          const uptime = Math.floor(process.uptime());
+          await context.sendActivity(`⚙️ **System Status:**\n- Uptime: ${uptime} seconds\n- Node.js: ${process.version}\n- Platform: ${process.platform}`);
+          break;
 
-                case '':
-                    // Boş mesaj veya sadece bot mention
-                    await context.sendActivity('👋 Merhaba! Bana bir komut yazabilirsiniz. Seçenekleri görmek için `yardım` yazın.');
-                    break;
+        case '':
+          // Empty message or mention only
+          await context.sendActivity('👋 Hello! Please enter a command. Type `help` or `yardım` to see available options.');
+          break;
 
-                default:
-                    await context.sendActivity(
-                        `💬 **Gelen Mesaj:** "${text}"\n\nKomutları listelemek için \`yardım\` veya \`help\` yazabilirsiniz.`
-                    );
-                    break;
-            }
+        default:
+          await context.sendActivity(
+            `💬 **Received message:** "${text}"\n\nType \`help\` or \`yardım\` to view available commands.`
+          );
+          break;
+      }
 
-            await next();
-        });
-    }
+      await next();
+    });
+  }
 
-    private async sendHelpResponse(context: TurnContext): Promise<void> {
-        const helpMessage = 
-`📋 **Kullanabileceğiniz Komutlar:**
-- \`ping\` : Botun canlılık ve gecikme kontrolü.
-- \`kart\` / \`card\` : Tanıtım Adaptive Card kartını görüntüler.
-- \`durum\` / \`status\` : Botun çalışma ve sistem bilgilerini verir.
-- \`yardım\` / \`help\` : Bu yardım menüsünü listeler.`;
+  private async sendHelpResponse(context: TurnContext): Promise<void> {
+    const helpMessage = 
+`📋 **Available Commands:**
+- \`ping\` : Checks bot liveness and latency.
+- \`card\` / \`kart\` : Displays the introductory Adaptive Card.
+- \`status\` / \`durum\` : Displays runtime statistics and system info.
+- \`help\` / \`yardım\` : Shows this command reference menu.`;
 
-        await context.sendActivity(helpMessage);
-    }
+    await context.sendActivity(helpMessage);
+  }
 }
