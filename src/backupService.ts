@@ -1,5 +1,5 @@
 /**
- * Created by 11hopem (11 Hopem Software Ltd. Şti.)
+ * Created by 11Hopem
  * Contact: umutocgdr@gmail.com
  *
  * Copyright (c) 2026 11hopem. All rights reserved.

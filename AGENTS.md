@@ -7,7 +7,7 @@ Bu doküman, **Teams Bot** projesinin mimari standartlarını, kurallarını ve 
 ## 1. Proje Kimliği ve Amacı
 - **Proje Adı**: Teams Bot
 - **Amaç**: Microsoft Teams toplantılarını ve mesajlarını otomatikleştiren, durum güncellemelerini takip eden akıllı bot çözümü.
-- **Geliştirici**: Umut Öçgüder <umutocgdr@gmail.com> / 11 Hopem Software Ltd. Şti.
+- **Geliştirici**: Umut Öçgüder <umutocgdr@gmail.com> / 11Hopem
 - **Logo**: `assets/logo.svg`
 
 ---
@@ -15,7 +15,7 @@ Bu doküman, **Teams Bot** projesinin mimari standartlarını, kurallarını ve 
 ## 2. Mimari ve Teknoloji Yığını
 - **Çalışma Ortamı**: Node.js, TypeScript
 - **Telemetri**: Dual-tier `src/telemetry.ts` (Yerel JSONL + Firebase `hopem-software-cloud`)
-- **Telif**: `Created by 11hopem (11 Hopem Software Ltd. Şti.)`
+- **Telif**: `Created by 11Hopem`
 
 ---
 
