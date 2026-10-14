@@ -1,7 +1,7 @@
 name: Autonomous CI/CD Pipeline & Release
 
 # Created by 11Hopem
-# Copyright (c) 2026 11hopem. All rights reserved.
+# Copyright (c) 2026 11Hopem. All rights reserved.
 
 on:
   push:
@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   quality-and-tests:
@@ -24,10 +23,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js (v20)
+      - name: Setup Node.js (v22)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Dependencies
         run: npm install || true
@@ -41,42 +40,57 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Code with Full History
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Configure Git Author (Rule 2)
         run: |
           git config user.name "Umut Öçgüder"
           git config user.email "umutocgdr@gmail.com"
 
-      - name: Generate Release Tag
-        id: tagger
+      - name: Determine Semantic Version Bump & Update
+        id: versioning
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          python3 -c '
-import sys
-tag = sys.argv[1].lstrip("v")
-parts = [int(p) for p in tag.split(".")] if "." in tag else [1, 0, 0]
-msg = sys.argv[2]
-if "feat!" in msg or "BREAKING" in msg:
-    parts[0] += 1; parts[1] = 0; parts[2] = 0
-elif "feat" in msg:
-    parts[1] += 1; parts[2] = 0
-else:
-    parts[2] += 1
-new_tag = f"v{parts[0]}.{parts[1]}.{parts[2]}"
-print(f"new_tag={new_tag}")
-' "$LATEST_TAG" "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Last commit message: $LAST_COMMIT_MSG"
+          
+          if [[ "$LAST_COMMIT_MSG" == *"feat!"* ]] || [[ "$LAST_COMMIT_MSG" == *"BREAKING"* ]]; then
+            BUMP_TYPE="major"
+          elif [[ "$LAST_COMMIT_MSG" == *"feat"* ]]; then
+            BUMP_TYPE="minor"
+          else
+            BUMP_TYPE="patch"
+          fi
+          
+          echo "Selected bump type: $BUMP_TYPE"
+          npm version "$BUMP_TYPE" --no-git-tag-version
+          
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=v$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Tag and Release
+      - name: Commit & Push Version Bump
+        run: |
+          git add package.json
+          git commit -m "chore(release): bump version to ${{ steps.versioning.outputs.tag_name }}" || echo "No changes to commit"
+          git tag ${{ steps.versioning.outputs.tag_name }}
+          git push origin main --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate GitHub Release with Release Notes
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tagger.outputs.new_tag }}
-          name: "Release ${{ steps.tagger.outputs.new_tag }} - teams-bot"
+          tag_name: ${{ steps.versioning.outputs.tag_name }}
+          name: "Release ${{ steps.versioning.outputs.tag_name }} - teams-bot"
           generate_release_notes: true
           make_latest: true
         env:

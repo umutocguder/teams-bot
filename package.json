@@ -9,7 +9,7 @@
     "pretest": "npx tsx scripts/backupTeamsBot.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "node --test 'tests/**/*.test.ts'",
+    "test": "npx tsx --test tests/*.test.ts",
     "dev": "tsx watch src/index.ts",
     "keep-alive": "./bin/keep-alive",
     "keep-alive:swift": "swift scripts/keep-alive.swift",
