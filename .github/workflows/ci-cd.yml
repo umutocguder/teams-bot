@@ -5,9 +5,9 @@ name: Autonomous CI/CD Pipeline & Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ master, dev ]
   workflow_dispatch:
 
 permissions:
@@ -37,7 +37,7 @@ jobs:
   autonomous-release:
     name: Semantic Versioning & GitHub Release
     needs: quality-and-tests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code with Full History
