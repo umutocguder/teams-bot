@@ -82,7 +82,7 @@ jobs:
           git add package.json
           git commit -m "chore(release): bump version to ${{ steps.versioning.outputs.tag_name }}" || echo "No changes to commit"
           git tag ${{ steps.versioning.outputs.tag_name }}
-          git push origin main --tags
+          git push origin HEAD
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
