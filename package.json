@@ -1,7 +1,7 @@
 {
-  "name": "teams-bot",
+  "name": "11-teams-bot",
   "version": "1.0.2",
-  "description": "Microsoft Teams Bot built with TypeScript and Microsoft Bot Framework",
+  "description": "11 Teams Bot built with TypeScript and Microsoft Bot Framework",
   "main": "dist/index.js",
   "scripts": {
     "backup": "npx tsx scripts/backupTeamsBot.ts",

@@ -6,7 +6,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { FIREBASE_ECOSYSTEM_CONFIG } from './firebaseConfig.ts';
+import { FIREBASE_ECOSYSTEM_CONFIG } from './firebaseConfig';
 
 export interface LogEntry {
   timestamp: string;
@@ -36,7 +36,7 @@ export class TelemetryLogger {
     cloudEndpoint?: string;
     maxBuffer?: number;
   } = {}) {
-    this.appName = config.appName || 'teams-bot';
+    this.appName = config.appName || '11-teams-bot';
     this.appVersion = config.appVersion || '1.0.0';
     this.projectId = config.projectId || FIREBASE_ECOSYSTEM_CONFIG.projectId;
     this.inMemoryBuffer = [];
@@ -118,4 +118,4 @@ export class TelemetryLogger {
   }
 }
 
-export const logger = new TelemetryLogger({ appName: 'teams-bot' });
+export const logger = new TelemetryLogger({ appName: '11-teams-bot' });

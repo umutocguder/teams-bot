@@ -1,6 +1,6 @@
-# Microsoft Teams Bot (TypeScript)
+# 11 Teams Bot (TypeScript)
 
-Bu proje, **Microsoft Bot Framework SDK** (`botbuilder`) ve **TypeScript** kullanılarak geliştirilmiş modern bir Microsoft Teams botudur.
+Bu proje, **Microsoft Bot Framework SDK** (`botbuilder`) ve **TypeScript** kullanılarak geliştirilmiş modern bir Microsoft Teams botudur (**11 Teams Bot**).
 
 ## 🚀 Özellikler
 - **Mesaj ve Mention Dinleyici:** Teams kanallarında ve birebir sohbetlerde mesajları işler.

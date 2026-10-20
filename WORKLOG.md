@@ -208,6 +208,25 @@ Bu dosya, Microsoft Teams Bot projesinde gerçekleştirilen tüm teknik kararlar
 - **Sıradaki Adımlar**:
   - Değişikliklerin GitHub'a commit ve pushlanması.
 
+---
+
+### [2026-10-20 09:42] Ürün İsmi "11 Teams Bot" Olarak Güncellendi
+- **Görev ve Amaç**: Kullanıcı talebi doğrultusunda ürün ve proje adının resmi olarak **"11 Teams Bot"** olarak güncellenmesi.
+- **Teknik Kararlar ve Güncellemeler**:
+  - `AGENTS.md`: Proje başlığı ve `Proje Adı` değeri `11 Teams Bot` olarak güncellendi.
+  - `package.json`: Paket adı `"11-teams-bot"` ve açıklama `"11 Teams Bot built with TypeScript and Microsoft Bot Framework"` olarak güncellendi.
+  - `README.md`: Başlık ve doküman içeriğindeki ürün adı `11 Teams Bot` yapıldı.
+  - `src/cards/welcomeCard.ts`: Varsayılan karşılama bot ismi `'11 Teams Bot'` olarak güncellendi.
+  - `src/bot.ts`: Karşılama kartı üretimi `'11 Teams Bot'` parametresiyle güncellendi.
+  - `src/index.ts`: Konsol başlatma mesajı `11 Teams Bot is running!` olarak güncellendi.
+  - `src/telemetry/logger.ts`: Varsayılan `appName` değeri `'11-teams-bot'` olarak ayarlandı.
+  - `src/backupService.ts`: Yedekleme başlığı `11 Teams Bot` yapıldı; CommonJS uyumluluğu için import ve `appType` fallback'leri sağlandı.
+- **Mevcut Durum ve Doğrulama**:
+  - `npm run build`: TypeScript derlemesi (`tsc`) hatasız tamamlandı.
+  - `npm test`: 9 testin tamamı başarıyla geçti (%100 başarı).
+  - Git Branch kuralı gereğince değişiklikler `dev` dalında yapıldı.
+
+
 
 
 

@@ -20,7 +20,7 @@ export class TeamsBot extends TeamsActivityHandler {
       const membersAdded = context.activity.membersAdded || [];
       for (const member of membersAdded) {
         if (member.id !== context.activity.recipient.id) {
-          const welcomeCard = createWelcomeCard('Teams Bot');
+          const welcomeCard = createWelcomeCard('11 Teams Bot');
           await context.sendActivity(MessageFactory.attachment(welcomeCard));
         }
       }
