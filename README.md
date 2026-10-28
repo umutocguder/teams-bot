@@ -1,73 +1,85 @@
-# Microsoft Teams Bot (TypeScript)
+<!-- Created by 11Hopem -->
+# 🤖 11Teams Bot — Microsoft Teams Bot Framework Assistant
 
-Bu proje, **Microsoft Bot Framework SDK** (`botbuilder`) ve **TypeScript** kullanılarak geliştirilmiş modern bir Microsoft Teams botudur.
+[![Node.js 18+](https://img.shields.io/badge/node-18+-green.svg?logo=node.js)](https://nodejs.org/)
+[![TypeScript 5.0+](https://img.shields.io/badge/typescript-5.0+-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
+[![Bot Framework](https://img.shields.io/badge/sdk-Microsoft%20Bot%20Framework-blue.svg)](https://dev.botframework.com/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://11hopem.com)
+[![Created by 11Hopem](https://img.shields.io/badge/created%20by-11Hopem-orange.svg)](https://11hopem.com)
 
-## 🚀 Özellikler
-- **Mesaj ve Mention Dinleyici:** Teams kanallarında ve birebir sohbetlerde mesajları işler.
-- **Adaptive Cards:** Zengin görsel, butonlu ve formlu kart desteği.
-- **Komut Sistemi:** `ping`, `yardım`, `durum`, `kart` vb. hazır komutlar.
-- **Sağlık Kontrolü:** `/api/health` endpoint'i üzerinden durum izleme.
+A modern, production-ready Microsoft Teams conversational assistant built with **TypeScript** and the **Microsoft Bot Framework SDK** (`botbuilder`). Supports personal 1:1 direct chats, channel mentions, rich Adaptive Cards, structured commands, and operational health telemetry.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+## 🌟 Key Features
 
-### 1. Bağımlılıkları Yükleme
+- **Channel & 1:1 Conversation Support**: Responds seamlessly to channel `@mentions` and direct private messages.
+- **Rich Adaptive Cards**: Delivers structured interactive forms, status boards, action buttons, and dynamic surveys.
+- **Command Dispatcher**: Built-in routing for core commands (`ping`, `help`, `status`, `summary`, `card`).
+- **Health Check & Observability**: Dedicated `/api/health` and `/api/messages` REST endpoints for monitoring and bot lifecycle probes.
+- **Local Testing & Emulator Compatibility**: Works out of the box with the [Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) without requiring Azure credentials for local development.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js 18+](https://nodejs.org/)
+- [Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) (for local testing)
+
+### 1. Clone & Install
+
 ```bash
+git clone https://github.com/umutocguder/teams-bot.git
+cd teams-bot
 npm install
 ```
 
-### 2. Ortam Değişkenleri (.env)
-`.env.example` dosyasını `.env` olarak kopyalayın ve Azure Bot kimlik bilgilerinizi girin (Yerel test için boş bırakılabilir):
-```env
-MicrosoftAppId=
-MicrosoftAppPassword=
-MicrosoftAppType=MultiTenant
-MicrosoftAppTenantId=
-PORT=3978
+### 2. Environment Configuration
+
+Copy the example configuration:
+
+```bash
+cp .env.example .env
 ```
 
-### 3. Geliştirme Modunda Başlatma
+*(Leave `MicrosoftAppId` and `MicrosoftAppPassword` blank for local emulator testing).*
+
+### 3. Run Development Server
+
 ```bash
 npm run dev
 ```
 
-### 4. Derleme ve Canlıya Alma
+The bot listens locally at `http://localhost:3978`.
+
+### 4. Connect with Emulator
+
+1. Open **Bot Framework Emulator**.
+2. Click **Open Bot** and enter `http://localhost:3978/api/messages`.
+3. Send `ping` or `help` to begin testing.
+
+---
+
+## 🧪 Testing & Build
+
 ```bash
+# Run unit tests
+npm test
+
+# Build for production
 npm run build
+
+# Start production server
 npm start
 ```
 
 ---
 
-## 🌐 Teams / Yerel Test Entegrasyonu
+## 🛡️ License & Attribution
 
-Botu Microsoft Teams veya Bot Framework Emulator ile yerel ortamda test etmek için bir tünel (örneğin `ngrok` veya `Dev Tunnels`) kullanabilirsiniz:
-
-```bash
-# ngrok ile 3978 portunu tünelleme
-ngrok http 3978
-```
-
-Elde edilen genel adresi (`https://<ngrok-id>.ngrok-free.app/api/messages`) Azure Bot Configuration > Messaging Endpoint alanına kaydedin.
-
----
-
-## 🟢 Teams & Mac "Her Zaman Online" (Keep-Alive) Modu
-
-Teams'te bilgisayar başından ayrılsanız bile durumunuzun **"Uzakta (Away / Sarı)"** yerine sürekli **"Kullanılabilir (Available / Yeşil)"** görünmesini sağlayan yerel macOS CoreGraphics betiği:
-
-### Özellikler:
-- Her 60 saniyede bir imleci 1 piksel kaydırıp geri getirerek işletim sisteminin boşta kalma sayacını (idle timer) sıfırlar.
-- Gözle fark edilmez, arka planda sıfır CPU ve RAM ile çalışır.
-- Harici hiçbir paket veya izin gerektirmez (yerel Swift + CoreGraphics).
-
-### Çalıştırma:
-```bash
-# Hızlı çalıştırma
-npm run keep-alive
-
-# Veya Swift ile doğrudan çalıştırma
-npm run keep-alive:swift
-```
-Çıkmak için terminalde `Ctrl + C` tuşlarına basmanız yeterlidir.
+Created by [11Hopem](https://11hopem.com).  
+Copyright © 2026 11Hopem. All rights reserved.  
+Licensed under the [MIT License](LICENSE).  
+Official website: [https://11hopem.com](https://11hopem.com)

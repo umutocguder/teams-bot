@@ -1,6 +1,6 @@
 import { CardFactory, Attachment } from 'botbuilder';
 
-export function createWelcomeCard(botName: string = 'Teams Bot'): Attachment {
+export function createWelcomeCard(botName: string = '11 Teams Bot'): Attachment {
     const card = {
         type: 'AdaptiveCard',
         body: [

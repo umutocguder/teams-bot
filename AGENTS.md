@@ -1,11 +1,11 @@
-# Teams Bot — Development & Architectural Guidelines
+# 11 Teams Bot — Development & Architectural Guidelines
 
-Bu doküman, **Teams Bot** projesinin mimari standartlarını, kurallarını ve geliştirme süreçlerini belirler.
+Bu doküman, **11 Teams Bot** projesinin mimari standartlarını, kurallarını ve geliştirme süreçlerini belirler.
 
 ---
 
 ## 1. Proje Kimliği ve Amacı
-- **Proje Adı**: Teams Bot
+- **Proje Adı**: 11 Teams Bot
 - **Amaç**: Microsoft Teams toplantılarını ve mesajlarını otomatikleştiren, durum güncellemelerini takip eden akıllı bot çözümü.
 - **Geliştirici**: Umut Öçgüder <umutocgdr@gmail.com> / 11Hopem
 - **Logo**: `assets/logo.svg`

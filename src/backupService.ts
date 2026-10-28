@@ -10,12 +10,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
-import { config } from './config.ts';
+import { config } from './config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT_DIR = path.resolve(__dirname, '..');
+const ROOT_DIR = process.cwd();
 
 export const DATA_DIR = path.join(ROOT_DIR, 'data');
 export const BACKUP_DIR = path.join(DATA_DIR, 'backups');
@@ -38,13 +35,13 @@ export interface TeamsBotBackupPayload {
 export function createTeamsBotBackup() {
   const payload: TeamsBotBackupPayload = {
     version: '1.0.0',
-    botName: 'Microsoft Teams Activity & Status Bot',
+    botName: '11 Teams Bot',
     timestamp: new Date().toISOString(),
     config: {
       port: config.port,
       hasAppId: !!config.MicrosoftAppId,
       hasTenantId: !!config.MicrosoftAppTenantId,
-      appType: config.MicrosoftAppType
+      appType: config.MicrosoftAppType || 'MultiTenant'
     },
     features: [
       'Activity Keep-Alive',

@@ -50,7 +50,7 @@ server.post('/api/messages', async (req, res) => {
 
 // Start Server Listener
 server.listen(config.port, () => {
-  console.log(`\n🚀 Microsoft Teams Bot is running!`);
+  console.log(`\n🚀 11 Teams Bot is running!`);
   console.log(`📡 Listening address: http://localhost:${config.port}`);
   console.log(`🔗 Message endpoint: http://localhost:${config.port}/api/messages`);
   console.log(`💚 Health check: http://localhost:${config.port}/api/health\n`);

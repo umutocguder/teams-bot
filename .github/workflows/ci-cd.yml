@@ -37,7 +37,9 @@ jobs:
   autonomous-release:
     name: Semantic Versioning & GitHub Release
     needs: quality-and-tests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    # Tag ve Release yalniz elle tetiklenince basilir, her push'ta degil.
+    # Dal modeli: master = prod; tag yalniz yayina cikmis surume atilir.
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code with Full History
